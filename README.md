@@ -48,7 +48,7 @@ One agent, one job. When something fails, you know exactly where.
 
 ## Live Demo
 
-**[→ Try the live demo here](https://adcontractiq-usc-demo.vercel.app/)**
+**<a href="https://adcontractiq-usc-demo.vercel.app/" target="_blank">→ Try the live demo here</a>**
 
 > **Please use only the supplied demo contract below. Do not upload sensitive or real documents.**
 
@@ -73,7 +73,7 @@ This is a fully synthetic contract created for demonstration purposes. All compa
 
 ## Audit Log
 
-**[→ View the Google Sheets audit log here](https://docs.google.com/spreadsheets/d/1bvzlQaV4IZpXVecgE63TglmVRi9oC_LwDYoDUbrIbD8/edit?usp=sharing)**
+**<a href="https://docs.google.com/spreadsheets/d/1bvzlQaV4IZpXVecgE63TglmVRi9oC_LwDYoDUbrIbD8/edit?usp=sharing" target="_blank">→ View the Google Sheets audit log here</a>**
 
 Two tabs:
 - **classification_log** — every document processed, timestamped, with contract type, complexity, confidence score, and AI summary
