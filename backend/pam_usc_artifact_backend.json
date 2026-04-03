@@ -1,0 +1,1267 @@
+{
+  "name": "pamv3_split_agents",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# WEBHOOK 1: CLASSIFY & SUMMARIZE (Agent 0)\nUpload PDF → Extract Text → Quick Classification + Summary → Display to User + Log to classification_log",
+        "width": 800,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1504,
+        48
+      ],
+      "typeVersion": 1,
+      "id": "3b6183aa-2cda-42e3-b101-cf3baaa86da7",
+      "name": "Note - Classify & Summarize"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "classify-contract",
+        "responseMode": "responseNode",
+        "options": {
+          "binaryPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1824,
+        384
+      ],
+      "id": "f22fc83f-9aea-4dad-97bd-935fd8f17ccc",
+      "name": "Webhook - Classify",
+      "webhookId": "classify-contract"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "data0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -1632,
+        384
+      ],
+      "id": "34b52713-b841-46bf-8f88-a10aeea9fecc",
+      "name": "Extract Text",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a Contract Classification and Summarization Agent for AdContractIQ.\n\nYour job is to QUICKLY analyze the contract and provide:\n1. **CLASSIFICATION** - contract type, partner type, complexity, revenue model\n2. **SUMMARY** - concise executive summary of key economic terms\n\nThis is a PREVIEW for the user before they decide to process the full contract.\n\n---CONTRACT TEXT START---\n{{ $json.text }}\n---CONTRACT TEXT END---\n\n---\n\n## CLASSIFICATION\n\nAnalyze the contract and determine:\n\n**contract_type**: The document type\n- master_agreement: Main partnership agreement establishing relationship\n- amendment: Changes to existing agreement\n- insertion_order: Specific campaign/order details\n- statement_of_work: Detailed scope and deliverables\n- addendum: Additional terms to existing agreement\n- exhibit: Attachment or schedule to main agreement\n- other: Anything else\n\n**partner_type**: The other party's role\n- publisher: Content/inventory owner\n- advertiser: Buyer of ad space/inventory\n- platform: Technology provider (SSP, DSP, ad server)\n- agency: Representing advertiser or publisher\n- network: Aggregator of inventory or demand\n- other: Other role\n\n**complexity**: Overall contract complexity\n- simple: Straightforward terms, 1-3 main calculation rules, clear revenue splits\n- moderate: Multiple calculation tiers or conditions, 4-8 rules, some interdependencies\n- complex: Many conditional rules, 9+ rules, nested calculations, multiple payment scenarios\n\n**revenue_model**: Primary revenue structure (choose all that apply)\n- revenue_share: Percentage split of revenue\n- cpm: Cost per thousand impressions\n- cpc: Cost per click\n- cpa: Cost per action/acquisition\n- fixed_fee: Flat payment amount\n- hybrid: Combination of above\n- other: Other model\n\n---\n\n## SUMMARY\n\nProvide a concise executive summary (3-5 sentences) focusing on:\n- What type of agreement this is\n- Who the parties are\n- The core economic arrangement (revenue split, pricing model, key percentages)\n- Any notable terms or conditions\n- Effective dates if available\n\nMake it actionable - help the user quickly understand if this is the right contract.\n\n---\n\n## CONTRACT INFO\n\nExtract basic metadata:\n- **partner_name**: Company/partner name\n- **effective_date**: When agreement starts\n- **expiration_date**: When agreement ends (if applicable)\n- **document_type**: Full document title/type\n- **key_terms**: Array of 3-5 most important terms (e.g., [\"60/40 revenue split\", \"$5 CPM minimum\", \"Net-90 payment terms\"])\n\n---\n\n## OUTPUT FORMAT\n\nReturn a JSON object with this EXACT structure:\n\n{\n  \"classification\": {\n    \"contract_type\": \"master_agreement\",\n    \"partner_type\": \"publisher\",\n    \"complexity\": \"moderate\",\n    \"revenue_model\": [\"revenue_share\", \"cpm\"],\n    \"confidence\": 0.95\n  },\n  \"contract_info\": {\n    \"partner_name\": \"Example Publisher LLC\",\n    \"effective_date\": \"2024-01-01\",\n    \"expiration_date\": \"2025-12-31\",\n    \"document_type\": \"Master Services Agreement\",\n    \"key_terms\": [\n      \"60/40 revenue split after COS\",\n      \"$2.50 CPM floor\",\n      \"Monthly reconciliation\"\n    ]\n  },\n  \"summary\": \"This is a Master Services Agreement between [Company] and [Partner] establishing a publisher partnership for programmatic advertising. The core economic model is a 60/40 revenue share (60% to publisher, 40% to platform) calculated after deducting Cost of Sale. The agreement includes a $2.50 CPM floor and net-90 payment terms. Effective January 1, 2024 with automatic annual renewal.\",\n  \"extracted_text_length\": 15420,\n  \"processing_recommendation\": {\n    \"should_process\": true,\n    \"reason\": \"Clear revenue-sharing structure with calculable terms\",\n    \"estimated_rules\": 8\n  }\n}\n\n## VALIDATION\n\n- Ensure all classification fields are populated\n- Summary should be 3-5 complete sentences\n- Include confidence score (0.7-1.0)\n- Provide processing recommendation based on whether contract has calculable terms\n- Return ONLY valid JSON, no markdown code blocks\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -1472,
+        384
+      ],
+      "id": "14ae2750-36e2-44ab-a4eb-3cdeec4c35f3",
+      "name": "AI Agent 0 - Classify & Summarize"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.1",
+          "mode": "list",
+          "cachedResultName": "gpt-5.1"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1472,
+        576
+      ],
+      "id": "630c5ee3-2119-4100-821e-1f24409d818b",
+      "name": "OpenAI GPT - Classify",
+      "credentials": {
+        "openAiApi": {
+          "id": "oshQDgNlPr5L9IcU",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nlet content = item.output || item.text || item.response || JSON.stringify(item);\n\n// Get the extracted text from the previous Extract Text node\nconst extractedText = $('Extract Text').first().json.text || '';\n\nif (typeof content === 'object' && content.classification) {\n  content.extracted_text = extractedText;\n  return [{ json: content }];\n}\n\nif (typeof content === 'string') {\n  content = content.replace(/```json\\n?/gi, '').replace(/```\\n?/g, '').trim();\n  const match = content.match(/\\{[\\s\\S]*\\}/);\n  if (match) content = match[0];\n}\n\ntry {\n  const parsed = JSON.parse(content);\n  if (!parsed.classification) throw new Error('Missing classification');\n  \n  // Ensure classification has all required fields\n  parsed.classification = parsed.classification || {};\n  parsed.classification.contract_type = parsed.classification.contract_type || 'other';\n  parsed.classification.partner_type = parsed.classification.partner_type || 'other';\n  parsed.classification.complexity = parsed.classification.complexity || 'moderate';\n  parsed.classification.revenue_model = parsed.classification.revenue_model || ['other'];\n  parsed.classification.confidence = parsed.classification.confidence || 0.5;\n  \n  // Ensure other required fields\n  parsed.contract_info = parsed.contract_info || { partner_name: 'Unknown' };\n  parsed.summary = parsed.summary || 'No summary available';\n  parsed.processing_recommendation = parsed.processing_recommendation || { should_process: true, reason: 'Unknown', estimated_rules: 0 };\n  \n  // Add the extracted text to the response\n  parsed.extracted_text = extractedText;\n  \n  return [{ json: parsed }];\n} catch (e) {\n  return [{ json: { \n    error: true, \n    message: e.message,\n    classification: {\n      contract_type: 'other',\n      partner_type: 'other',\n      complexity: 'unknown',\n      revenue_model: ['other'],\n      confidence: 0\n    },\n    summary: 'Error processing contract',\n    extracted_text: extractedText\n  } }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        384
+      ],
+      "id": "9e6f364c-ecb3-4506-9990-c1fc6c8922e0",
+      "name": "Parse Classification"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\n\n// Grab filename from webhook binary data before it gets dropped\nlet pdfName = 'unknown.pdf';\ntry {\n  const webhookBin = $('Webhook - Classify').first().binary || {};\n  pdfName = webhookBin.data?.fileName || \n            webhookBin.data0?.fileName || \n            item.pdf_name || \n            item.file_name || \n            'unknown.pdf';\n} catch(e) {\n  pdfName = item.pdf_name || item.file_name || 'unknown.pdf';\n}\n\nconst timestamp = new Date().toISOString();\nconst classification_id = `${pdfName}::${timestamp}`;\nconst pdf_id = classification_id;\n\nconst out = {\n  ...item,\n  timestamp_utc: timestamp,\n  pdf_name: pdfName,\n  pdf_id,\n  classification_id,\n  model: 'gpt-5.1',\n  prompt_version: 'classify_v1'\n};\n\nreturn [{ json: out }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1024,
+        384
+      ],
+      "id": "59ea1fc6-a61b-4a58-b28c-38b659523efc",
+      "name": "Add Classification Metadata"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -800,
+        320
+      ],
+      "id": "5f3fedf8-ecde-4106-847c-cea389177efa",
+      "name": "Respond Classification"
+    },
+    {
+      "parameters": {
+        "jsCode": "const run = $input.first().json;\n\nreturn [{\n  json: {\n    classification_id: run.classification_id,\n    timestamp_utc: run.timestamp_utc,\n    pdf_id: run.pdf_id || '',\n    pdf_name: run.pdf_name,\n    model: run.model,\n    prompt_version: run.prompt_version,\n    contract_type: run.classification?.contract_type || '',\n    partner_type: run.classification?.partner_type || '',\n    complexity: run.classification?.complexity || '',\n    revenue_model: Array.isArray(run.classification?.revenue_model) ? run.classification.revenue_model.join(', ') : '',\n    confidence: run.classification?.confidence || 0,\n    partner_name: run.contract_info?.partner_name || '',\n    effective_date: run.contract_info?.effective_date || '',\n    expiration_date: run.contract_info?.expiration_date || '',\n    document_type: run.contract_info?.document_type || '',\n    key_terms: Array.isArray(run.contract_info?.key_terms) ? run.contract_info.key_terms.join(' | ') : '',\n    summary: run.summary || '',\n    should_process: run.processing_recommendation?.should_process || false,\n    processing_reason: run.processing_recommendation?.reason || '',\n    estimated_rules: run.processing_recommendation?.estimated_rules || 0,\n    extracted_text_length: run.extracted_text_length || 0\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -864,
+        528
+      ],
+      "id": "6d3240e6-9ec5-458c-a604-1831994f65ae",
+      "name": "Prepare Classification Log"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1bvzlQaV4IZpXVecgE63TglmVRi9oC_LwDYoDUbrIbD8",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "classification_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp_utc": "={{ $json.timestamp_utc }}",
+            "pdf_id": "={{ $json.pdf_id }}",
+            "pdf_name": "={{ $json.pdf_name }}",
+            "model": "={{ $json.model }}",
+            "prompt_version": "={{ $json.prompt_version }}",
+            "contract_type": "={{ $json.contract_type }}",
+            "partner_type": "={{ $json.partner_type }}",
+            "complexity": "={{ $json.complexity }}",
+            "revenue_model": "={{ $json.revenue_model }}",
+            "partner_name": "={{ $json.partner_name }}",
+            "effective_date": "={{ $json.effective_date }}",
+            "expiration_date": "={{ $json.expiration_date }}",
+            "document_type": "={{ $json.document_type }}",
+            "summary": "={{ $json.summary }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "pdf_id",
+              "displayName": "pdf_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp_utc",
+              "displayName": "timestamp_utc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pdf_name",
+              "displayName": "pdf_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "model",
+              "displayName": "model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "prompt_version",
+              "displayName": "prompt_version",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contract_type",
+              "displayName": "contract_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "partner_type",
+              "displayName": "partner_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "complexity",
+              "displayName": "complexity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "revenue_model",
+              "displayName": "revenue_model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "classification_confidence",
+              "displayName": "classification_confidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "partner_name",
+              "displayName": "partner_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "effective_date",
+              "displayName": "effective_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "expiration_date",
+              "displayName": "expiration_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "document_type",
+              "displayName": "document_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        -656,
+        528
+      ],
+      "id": "0902157b-bd79-468f-9365-d74aced09e7b",
+      "name": "GS - Append Classification Log",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "j30hlHFOIQdO3GDh",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# WEBHOOK 2: EXTRACT RULES (Agent 1)\nReceive contract text from frontend → Extract calculable rules → Store in rules_log",
+        "width": 800,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "15590d7b-3d9e-4690-b418-2cb737669b8d",
+      "name": "Note - Extract Rules"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "extract-rules",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -144,
+        320
+      ],
+      "id": "ba137f87-d5d7-4e39-bde0-13f61ac4263f",
+      "name": "Webhook - Extract Rules",
+      "webhookId": "extract-rules"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert Contract Analysis Agent for AdContractIQ.\n\nYour job is to **EXTRACT** only calculation-relevant rules from advertising partnership agreements.\n\nThe contract has already been classified. Your focus is ONLY on extracting calculable rules.\n\n---CONTRACT TEXT START---\n{{ $json.body.contract_text }}\n---CONTRACT TEXT END---\n\n---\n\n## EXTRACTION CRITERIA\n\n### ✅ MUST EXTRACT (Calculable Rules):\nExtract rules that contain **QUANTIFIABLE ELEMENTS** needed for revenue calculations:\n\n- **Percentages**: \"60% revenue share\", \"10% COS\", \"15 basis points\"\n- **Dollar Amounts**: \"$5,000 minimum\", \"$2.50 CPM floor\", \"USD currency\"\n- **Mathematical Thresholds**: \"if impressions > 10M\", \"when quality score >= 85%\"\n- **Rates & Multipliers**: \"CPM of $3.00\", \"2x rate for premium inventory\"\n- **Tiered Structures**: \"0-5M impressions: 55%, 5M-10M: 60%, 10M+: 65%\"\n- **Deductions/Add-backs**: \"subtract COS before calculating\", \"add back COC to publisher share\"\n- **Conditional Formulas**: \"if viewability > 70%, apply 5% bonus\"\n\n### ❌ DO NOT EXTRACT (Non-Calculable):\nDo NOT extract rules that are administrative, procedural, or don't contain numbers:\n\n- **Timing/Process**: \"payment within 30 days\", \"invoices due by month-end\", \"quarterly reviews\"\n- **Rights & Obligations**: \"audit rights\", \"termination clauses\", \"confidentiality terms\"\n- **General Standards**: \"maintain brand safety\", \"comply with regulations\", \"industry best practices\"\n- **Dispute Resolution**: \"arbitration in New York\", \"90-day notice period\"\n- **Definitions Without Numbers**: \"Net Revenue means gross revenue less certain costs\" (UNLESS it specifies the costs with percentages)\n\n---\n\n## OUTPUT FORMAT\n\nReturn a JSON object with this EXACT structure:\n\n{\n  \"rules\": [\n    {\n      \"rule_number\": 1,\n      \"rule_text\": \"[Plain English description of the calculable rule]\",\n      \"confidence\": 0.95,\n      \"source\": \"[SEARCHABLE reference]\",\n      \"category\": \"[revenue_share|cost|pricing|performance|payment|volume|special]\",\n      \"is_calculable\": true,\n      \"calculation_type\": \"[percentage|fixed_amount|threshold|tier|conditional|rate]\",\n      \"extracted_values\": {\n        \"percentages\": [60, 10],\n        \"amounts\": [2.50],\n        \"thresholds\": [10000000],\n        \"operators\": [\"multiply\", \"subtract\"]\n      }\n    }\n  ],\n  \"glossary\": {\n    \"[TERM]\": \"[Definition - ONLY include terms with numeric definitions]\"\n  },\n  \"extraction_stats\": {\n    \"total_rules_found\": 15,\n    \"calculable_rules\": 12,\n    \"skipped_rules\": 3,\n    \"skipped_reasons\": [\"timing/process\", \"general obligations\", \"audit rights\"]\n  }\n}\n\n## VALIDATION RULES\n\nBefore including a rule, ask yourself:\n\n1. ✅ Does this rule contain a number, percentage, or amount? If NO → Skip it\n2. ✅ Will this rule be needed to calculate revenue or payments? If NO → Skip it\n3. ✅ Can I extract specific numeric values from this rule? If NO → Skip it\n4. ✅ Is this rule about HOW MUCH (quantity) or just WHEN/HOW (process)? If WHEN/HOW → Skip it\n5. ✅ Would a spreadsheet formula need this information? If NO → Skip it\n\n## CONFIDENCE SCORING\n\n- 0.95-1.00: Numbers are explicitly stated, no interpretation needed\n- 0.85-0.94: Minor interpretation required, but meaning is clear\n- 0.70-0.84: Some ambiguity in how values are calculated\n- Below 0.70: Too unclear to extract reliably (Skip the rule)\n\n## FINAL INSTRUCTIONS\n\n1. EXTRACT ONLY CALCULABLE RULES with numbers\n2. BE SPECIFIC with exact percentages, amounts, thresholds\n3. USE PLAIN ENGLISH descriptions\n4. POPULATE ALL FIELDS for each rule\n5. SOURCE EVERYTHING with searchable PDF references\n6. NO HALLUCINATION - only extract what's in the document\n7. NO ADMINISTRATIVE RULES - skip timing, processes, rights\n8. RETURN ONLY VALID JSON\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        64,
+        336
+      ],
+      "id": "9327d7e6-c34d-4aff-bb6c-a3a214c6623c",
+      "name": "AI Agent 1 - Extract Rules"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.1",
+          "mode": "list",
+          "cachedResultName": "gpt-5.1"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        528
+      ],
+      "id": "dc52614f-a3e2-4421-a232-72fcef861928",
+      "name": "OpenAI GPT - Extract",
+      "credentials": {
+        "openAiApi": {
+          "id": "oshQDgNlPr5L9IcU",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nlet content = item.output || item.text || item.response || JSON.stringify(item);\n\nif (typeof content === 'object' && content.rules) {\n  return [{ json: content }];\n}\n\nif (typeof content === 'string') {\n  content = content.replace(/```json\\n?/gi, '').replace(/```\\n?/g, '').trim();\n  const match = content.match(/\\{[\\s\\S]*\\}/);\n  if (match) content = match[0];\n}\n\ntry {\n  const parsed = JSON.parse(content);\n  if (!parsed.rules) throw new Error('Missing rules');\n  \n  // Ensure all rules have the required fields\n  parsed.rules = parsed.rules.map((r, i) => ({\n    rule_number: r.rule_number || i + 1,\n    rule_text: r.rule_text || '',\n    confidence: r.confidence || 0.5,\n    source: r.source || 'Unknown',\n    category: r.category || 'other',\n    approved: false,\n    is_calculable: r.is_calculable !== undefined ? r.is_calculable : true,\n    calculation_type: r.calculation_type || 'unknown',\n    extracted_values: r.extracted_values || {\n      percentages: [],\n      amounts: [],\n      thresholds: [],\n      operators: []\n    }\n  }));\n  \n  // Ensure other required fields exist\n  parsed.glossary = parsed.glossary || {};\n  parsed.extraction_stats = parsed.extraction_stats || {\n    total_rules_found: parsed.rules.length,\n    calculable_rules: parsed.rules.length,\n    skipped_rules: 0,\n    skipped_reasons: []\n  };\n  \n  return [{ json: parsed }];\n} catch (e) {\n  return [{ json: { \n    error: true, \n    message: e.message, \n    rules: [] \n  } }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        336,
+        336
+      ],
+      "id": "7f2a1f29-04e7-420c-8e30-44b52c303d49",
+      "name": "Parse Extraction"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\n\n// Grab pdf_name from the original extract webhook request body\nlet pdfName = 'unknown.pdf';\ntry {\n  const webhookBody = $('Webhook - Extract Rules').first().json.body || {};\n  pdfName = webhookBody.pdf_name || 'unknown.pdf';\n} catch(e) {\n  pdfName = 'unknown.pdf';\n}\n\n// Grab classification_id the same way\nlet classificationId = '';\ntry {\n  const webhookBody = $('Webhook - Extract Rules').first().json.body || {};\n  classificationId = webhookBody.classification_id || '';\n} catch(e) {\n  classificationId = '';\n}\n\nconst timestamp = new Date().toISOString();\nconst execution_id = `${pdfName}::${timestamp}`;\nconst pdf_id = classificationId || execution_id;\n\nconst out = {\n  ...item,\n  timestamp_utc: timestamp,\n  pdf_name: pdfName,\n  pdf_id,\n  classification_id: classificationId,\n  execution_id,\n  model: 'gpt-5.1',\n  prompt_version: 'extract_v1'\n};\n\nreturn [{ json: out }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        336
+      ],
+      "id": "8e7d2a85-f26d-4f86-82ff-49b6ce92a8fd",
+      "name": "Add Extraction Metadata"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        880,
+        304
+      ],
+      "id": "5ea2d25c-c432-4ba5-b7ae-b3b43c64388b",
+      "name": "Respond Extraction"
+    },
+    {
+      "parameters": {
+        "jsCode": "const run = $input.first().json;\nconst rules = run.rules || [];\nreturn rules.map((r, idx) => {\n  const ruleNum = r.rule_number ?? (idx + 1);\n  const ruleId = `${run.execution_id}_r${String(ruleNum).padStart(3,'0')}`;\n  return {\n    json: {\n      execution_id: run.execution_id,\n      classification_id: run.classification_id,\n      timestamp_utc: run.timestamp_utc,\n      pdf_id: run.pdf_id || '',\n      pdf_name: run.pdf_name,\n      model: run.model,\n      prompt_version: run.prompt_version,\n      rule_number: ruleNum,\n      rule_id: ruleId,\n      rule_text: r.rule_text || '',\n      category: r.category || '',\n      calculation_type: r.calculation_type || '',\n      confidence: r.confidence ?? '',\n      source: r.source || '',\n      is_calculable: r.is_calculable !== undefined ? r.is_calculable : true,\n      reviewed: false,\n      reviewed_at: ''\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        480
+      ],
+      "id": "1b0126ca-5d12-4c85-a0f0-cd1f0938f3ad",
+      "name": "Prepare Rules Log"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1bvzlQaV4IZpXVecgE63TglmVRi9oC_LwDYoDUbrIbD8",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "rules_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "execution_id": "={{ $json.execution_id }}",
+            "timestamp_utc": "={{ $json.timestamp_utc }}",
+            "pdf_id": "={{ $json.pdf_id }}",
+            "pdf_name": "={{ $json.pdf_name }}",
+            "model": "={{ $json.model }}",
+            "prompt_version": "={{ $json.prompt_version }}",
+            "rule_number": "={{ $json.rule_number }}",
+            "rule_id": "={{ $json.rule_id }}",
+            "rule_text": "={{ $json.rule_text }}",
+            "category": "={{ $json.category }}",
+            "calculation_type": "={{ $json.calculation_type }}",
+            "confidence": "={{ $json.confidence }}",
+            "source": "={{ $json.source }}",
+            "is_calculable": "={{ $json.is_calculable }}",
+            "reviewed": "={{ $json.reviewed }}",
+            "reviewed_at": "={{ $json.reviewed_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp_utc",
+              "displayName": "timestamp_utc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pdf_id",
+              "displayName": "pdf_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "pdf_name",
+              "displayName": "pdf_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "model",
+              "displayName": "model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "prompt_version",
+              "displayName": "prompt_version",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "rule_number",
+              "displayName": "rule_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "rule_id",
+              "displayName": "rule_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "rule_text",
+              "displayName": "rule_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "calculation_type",
+              "displayName": "calculation_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "confidence",
+              "displayName": "confidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "is_calculable",
+              "displayName": "is_calculable",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reviewed",
+              "displayName": "reviewed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reviewed_at",
+              "displayName": "reviewed_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        832,
+        704
+      ],
+      "id": "ee15a6a3-b95d-47e3-81fc-571214b9051a",
+      "name": "GS - Append Rules Log",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "j30hlHFOIQdO3GDh",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# WEBHOOK 3: BUILD EXPRESSIONS\nReceive finalized rules → Build mathematical expressions → Return calculation chains",
+        "width": 800,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1712,
+        64
+      ],
+      "typeVersion": 1,
+      "id": "fade9554-ae92-4690-8b6f-e604f07e8a7b",
+      "name": "Note - Expression Builder"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "build-expressions",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        1504,
+        464
+      ],
+      "id": "5783a794-420d-4e96-979c-7b9491431ec0",
+      "name": "Webhook - Build Expressions",
+      "webhookId": "build-expressions"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a Financial Calculation Builder for AdContractIQ. Build mathematical expression chains from contract rules.\n\nHere is the complete input data:\n\n{{ JSON.stringify($json) }}\n\nINSTRUCTIONS:\n1. Look at the 'finalized_rules' array - these are contract rules with revenue share percentages and calculations\n2. For each rule (or group of related rules), create a calculation chain showing step-by-step math\n3. Use the 'base_revenue' value (or 100 if not provided) for sample calculations\n4. Common patterns: \"after deducting X% COS\" = subtract first, \"Y% revenue share\" = multiply\n\nOUTPUT FORMAT (PURE JSON ONLY - NO MARKDOWN, NO LATEX):\n{\n  \"calculation_chains\": [\n    {\n      \"chain_id\": \"unique_id\",\n      \"label\": \"Calculation Name\",\n      \"description\": \"What this calculates\",\n      \"steps\": [\n        {\n          \"step_number\": 1,\n          \"operation\": \"subtract\",\n          \"label\": \"Step description\",\n          \"formula\": \"Variable_Name * 0.20\",\n          \"formula_display\": \"Gross Revenue * 20%\",\n          \"variables\": {\"Gross_Revenue\": 100, \"Rate\": 0.20},\n          \"result\": 20.00,\n          \"running_total\": 80.00,\n          \"display\": \"$100.00 - $20.00 (20% COS) = $80.00\",\n          \"rule_references\": [1]\n        }\n      ],\n      \"final_amounts\": {\"party_1\": 48.00, \"party_2\": 32.00}\n    }\n  ],\n  \"summary\": {\n    \"total_chains\": 1,\n    \"rules_used\": [1, 2],\n    \"rules_not_used\": [],\n    \"notes\": \"\"\n  }\n}\n\nCRITICAL: Return ONLY the JSON object above. No code blocks, no LaTeX (\\text, \\times), no explanations. Just pure JSON.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1808,
+        320
+      ],
+      "id": "9f3137ce-3a7b-4b78-8fb0-abdc6eaf2307",
+      "name": "AI Agent - Expression Builder"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.1",
+          "mode": "list",
+          "cachedResultName": "gpt-5.1"
+        },
+        "options": {
+          "responseFormat": "json_object",
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1808,
+        512
+      ],
+      "id": "97493746-35f5-461b-b1a0-15cd2efd74f4",
+      "name": "OpenAI GPT - Expressions",
+      "credentials": {
+        "openAiApi": {
+          "id": "oshQDgNlPr5L9IcU",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nlet content = item.output || item.text || item.response || JSON.stringify(item);\n\nif (typeof content === 'object' && content.calculation_chains) {\n  return [{ json: content }];\n}\n\nif (typeof content === 'string') {\n  content = content.replace(/```json\\n?/gi, '').replace(/```\\n?/g, '').trim();\n  const match = content.match(/\\{[\\s\\S]*\\}/);\n  if (match) content = match[0];\n}\n\ntry {\n  const parsed = JSON.parse(content);\n  if (!parsed.calculation_chains) throw new Error('Missing calculation_chains');\n  return [{ json: parsed }];\n} catch (e) {\n  return [{ json: { error: true, message: e.message, calculation_chains: [] } }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2080,
+        320
+      ],
+      "id": "89e53eb2-d1ea-4f23-a0d4-f18e488b70a2",
+      "name": "Parse Expressions"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        2368,
+        320
+      ],
+      "id": "cd863538-9d40-4bfc-bfd3-78bbb37e0382",
+      "name": "Respond Expressions"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputJson = $input.first().json;\nconst body = inputJson.body || inputJson;\nconst rules = body.finalized_rules || [];\nconst executionId = body.execution_id || body.pdf_id || '';\n\nif (!Array.isArray(rules) || rules.length === 0) {\n  return [];\n}\n\nconst timestamp = new Date().toISOString();\n\nreturn rules.map((r, idx) => {\n  const ruleNum = r.rule_number ?? (idx + 1);\n  const ruleId = r.rule_id || (executionId ? `${executionId}_r${String(ruleNum).padStart(3,'0')}` : '');\n  return {\n    json: {\n      rule_id: ruleId,\n      reviewed: true,\n      reviewed_at: timestamp\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1728,
+        688
+      ],
+      "id": "ce50bd6f-a2e5-4178-be97-d64b5a8f6513",
+      "name": "Prepare Review Updates"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1bvzlQaV4IZpXVecgE63TglmVRi9oC_LwDYoDUbrIbD8",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "rules_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "rule_id": "={{ $json.rule_id }}",
+            "reviewed": "={{ $json.reviewed }}",
+            "reviewed_at": "={{ $json.reviewed_at }}",
+            "row_number": 0
+          },
+          "matchingColumns": [
+            "rule_id"
+          ],
+          "schema": [
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "timestamp_utc",
+              "displayName": "timestamp_utc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "pdf_id",
+              "displayName": "pdf_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "pdf_name",
+              "displayName": "pdf_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "model",
+              "displayName": "model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "prompt_version",
+              "displayName": "prompt_version",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "rule_number",
+              "displayName": "rule_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "rule_id",
+              "displayName": "rule_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "rule_text",
+              "displayName": "rule_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "calculation_type",
+              "displayName": "calculation_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "confidence",
+              "displayName": "confidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "is_calculable",
+              "displayName": "is_calculable",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "reviewed",
+              "displayName": "reviewed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reviewed_at",
+              "displayName": "reviewed_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        2032,
+        688
+      ],
+      "id": "0c520e73-8a84-4558-a9d2-54e6fa604292",
+      "name": "GS - Mark Reviewed",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "j30hlHFOIQdO3GDh",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook - Classify": {
+      "main": [
+        [
+          {
+            "node": "Extract Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Text": {
+      "main": [
+        [
+          {
+            "node": "AI Agent 0 - Classify & Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent 0 - Classify & Summarize": {
+      "main": [
+        [
+          {
+            "node": "Parse Classification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT - Classify": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent 0 - Classify & Summarize",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Classification": {
+      "main": [
+        [
+          {
+            "node": "Add Classification Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Classification Metadata": {
+      "main": [
+        [
+          {
+            "node": "Respond Classification",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare Classification Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Classification Log": {
+      "main": [
+        [
+          {
+            "node": "GS - Append Classification Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Extract Rules": {
+      "main": [
+        [
+          {
+            "node": "AI Agent 1 - Extract Rules",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent 1 - Extract Rules": {
+      "main": [
+        [
+          {
+            "node": "Parse Extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT - Extract": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent 1 - Extract Rules",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Extraction": {
+      "main": [
+        [
+          {
+            "node": "Add Extraction Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Extraction Metadata": {
+      "main": [
+        [
+          {
+            "node": "Respond Extraction",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare Rules Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Rules Log": {
+      "main": [
+        [
+          {
+            "node": "GS - Append Rules Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Build Expressions": {
+      "main": [
+        [
+          {
+            "node": "AI Agent - Expression Builder",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare Review Updates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent - Expression Builder": {
+      "main": [
+        [
+          {
+            "node": "Parse Expressions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT - Expressions": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - Expression Builder",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Expressions": {
+      "main": [
+        [
+          {
+            "node": "Respond Expressions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Review Updates": {
+      "main": [
+        [
+          {
+            "node": "GS - Mark Reviewed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "19002297-f3f1-4f4c-8544-e36f59086f13",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b1a135e7485b738aa826aa94bb2a4c991203be0751bf3634ba56b89ffd715bde"
+  },
+  "id": "PfzM6uBgrFkyyqB9",
+  "tags": []
+}
