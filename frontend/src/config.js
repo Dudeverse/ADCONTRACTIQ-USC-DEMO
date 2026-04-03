@@ -2,9 +2,9 @@
 const N8N_BASE_URL = "https://pamv3demo.app.n8n.cloud"
 // these are the paths for the webhooks
 const N8N_WEBHOOK_PATHS = {
-  CLASSIFY_CONTRACT: "/webhook-test/classify-contract",
-  EXTRACT_RULES: "/webhook-test/extract-rules",
-  BUILD_EXPRESSIONS: "/webhook-test/build-expressions",
+  CLASSIFY_CONTRACT: "/webhook/classify-contract",
+  EXTRACT_RULES: "/webhook/extract-rules",
+  BUILD_EXPRESSIONS: "/webhook/build-expressions",
 }
 
 const joinUrl = (baseUrl, path) => {
