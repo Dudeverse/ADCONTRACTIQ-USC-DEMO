@@ -1,0 +1,109 @@
+/* Classification Card Styles */
+.classification-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.classification-card h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.classification-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.classification-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.classification-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.classification-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.classification-value {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.classification-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: capitalize;
+  width: fit-content;
+}
+
+/* Confidence Bar */
+.confidence-bar-container {
+  position: relative;
+  width: 100%;
+  height: 28px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.confidence-bar-fill {
+  height: 100%;
+  transition: width 0.5s ease-out;
+  border-radius: 6px;
+}
+
+.confidence-percentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  z-index: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .classification-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .classification-card {
+    padding: 20px;
+  }
+}
+
+/* Dark mode specific tweaks */
+[data-theme="dark"] .classification-card {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .confidence-percentage {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}

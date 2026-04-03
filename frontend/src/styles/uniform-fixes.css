@@ -1,0 +1,485 @@
+/* ============================================
+   UNIFORM FIXES - Font Sizes & Padding
+   ============================================ */
+
+/* Global container standardization */
+.expression-builder-container,
+.final-container {
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header standardization */
+.expression-header,
+.final-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.expression-header h2,
+.final-title h1 {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.expression-header p,
+.final-title p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+/* Card standardization */
+.expressions-card,
+.info-card,
+.summary-card,
+.rules-card,
+.glossary-card,
+.calculation-chain,
+.build-prompt-content {
+  padding: 1.5rem !important;
+  margin-bottom: 1.5rem;
+}
+
+/* Heading standardization */
+.expressions-card h2,
+.info-card h2,
+.summary-card h2,
+.rules-card h2,
+.glossary-card h2 {
+  font-size: 1.25rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.chain-item-header h3,
+.chain-header h3 {
+  font-size: 1.1rem !important;
+  margin: 0;
+}
+
+/* Text standardization */
+.chain-desc,
+.rule-content,
+.definition,
+.step-display,
+.summary-card p {
+  font-size: 0.95rem !important;
+  line-height: 1.6 !important;
+}
+
+/* Build prompt adjustments */
+.build-prompt-content {
+  max-width: 600px;
+}
+
+.build-prompt-icon {
+  font-size: 3.5rem !important;
+  margin-bottom: 1rem;
+}
+
+.build-prompt-content h3 {
+  font-size: 1.5rem !important;
+  margin-bottom: 1rem;
+}
+
+.build-prompt-content p {
+  font-size: 0.95rem !important;
+  margin-bottom: 1.5rem;
+}
+
+/* Waterfall step adjustments */
+.waterfall-step {
+  padding: 1.25rem !important;
+}
+
+.step-label {
+  font-size: 1rem !important;
+}
+
+.formula-display code {
+  font-size: 0.9rem !important;
+}
+
+.result-value {
+  font-size: 1.25rem !important;
+}
+
+.running-total-value {
+  font-size: 1.25rem !important;
+}
+
+/* Stats adjustments */
+.expressions-stats .stat {
+  padding: 1.25rem !important;
+}
+
+.expressions-stats .stat-value {
+  font-size: 2rem !important;
+}
+
+.expressions-stats .stat-label {
+  font-size: 0.85rem !important;
+}
+
+/* Final amounts adjustments */
+.final-amounts {
+  padding: 1.25rem !important;
+  margin-top: 1.25rem;
+}
+
+.party-amount,
+.amount-value {
+  font-size: 1.1rem !important;
+}
+
+/* Actions bar standardization */
+.expressions-actions,
+.final-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Button size standardization */
+.btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+}
+
+.btn-large {
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+}
+
+/* Remove excessive padding from nested elements */
+.chain-content {
+  padding: 1.25rem !important;
+}
+
+.waterfall-container {
+  gap: 1rem;
+}
+
+/* Info grid adjustments */
+.info-grid {
+  gap: 1rem;
+}
+
+.info-item {
+  padding: 0.75rem;
+}
+
+.info-label {
+  font-size: 0.85rem !important;
+}
+
+.info-value {
+  font-size: 0.95rem !important;
+}
+
+/* Rules list adjustments */
+.rule-item {
+  padding: 1.25rem !important;
+  margin-bottom: 1rem;
+}
+
+.rule-num {
+  font-size: 0.9rem !important;
+}
+
+.rule-content {
+  margin: 0.75rem 0 !important;
+}
+
+.rule-source {
+  font-size: 0.85rem !important;
+}
+
+/* Glossary adjustments */
+.glossary-item {
+  padding: 0.75rem 0;
+}
+
+.term {
+  font-size: 0.95rem !important;
+  margin-bottom: 0.25rem;
+}
+
+.definition {
+  font-size: 0.9rem !important;
+}
+
+/* Chain step summary in final output */
+.step-summary {
+  padding: 0.625rem 1rem !important;
+}
+
+.step-label {
+  font-size: 0.9rem !important;
+}
+
+.step-result {
+  font-size: 1rem !important;
+}
+
+/* Amount line in final output */
+.amount-line {
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.amount-value {
+  font-size: 1rem !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .expression-builder-container,
+  .final-container {
+    padding: 1rem;
+  }
+  
+  .expressions-card,
+  .info-card,
+  .summary-card,
+  .rules-card,
+  .glossary-card {
+    padding: 1rem !important;
+  }
+  
+  .expression-header h2,
+  .final-title h1 {
+    font-size: 1.5rem;
+  }
+}
+
+/* ============================================
+   HOME PAGE (Upload Choice) FIXES
+   ============================================ */
+
+.upload-choice-container {
+  padding: 2rem 1.5rem;
+}
+
+.upload-choice-content {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.upload-choice-content h1 {
+  font-size: 2.5rem !important;
+  margin-bottom: 0.75rem;
+}
+
+.upload-choice-subtitle {
+  font-size: 1.1rem !important;
+  margin-bottom: 2.5rem;
+}
+
+.upload-options {
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.upload-option {
+  padding: 2rem !important;
+  transition: all 0.2s ease;
+}
+
+.upload-option:hover {
+  transform: translateY(-2px);
+}
+
+.option-icon {
+  font-size: 3rem !important;
+  margin-bottom: 1rem;
+}
+
+.upload-option h3 {
+  font-size: 1.35rem !important;
+  margin-bottom: 0.75rem;
+}
+
+.upload-option p {
+  font-size: 0.95rem !important;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  min-height: 3rem;
+}
+
+.upload-option .btn {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+}
+
+/* Upload page fixes */
+.upload-container {
+  padding: 2rem 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* JSON Upload page fixes */
+.upload-json-container {
+  padding: 2rem 1.5rem;
+}
+
+.upload-json-content {
+  max-width: 700px;
+}
+
+.upload-json-header h2 {
+  font-size: 1.75rem !important;
+  margin-bottom: 0.75rem;
+}
+
+.upload-json-header p {
+  font-size: 1rem !important;
+}
+
+.drop-zone {
+  padding: 2.5rem !important;
+}
+
+.drop-zone-icon {
+  font-size: 3.5rem !important;
+}
+
+.drop-zone h3 {
+  font-size: 1.25rem !important;
+}
+
+.drop-zone p {
+  font-size: 0.95rem !important;
+}
+
+.info-box h4 {
+  font-size: 0.95rem !important;
+}
+
+.info-box pre {
+  font-size: 0.85rem !important;
+  padding: 1rem;
+}
+
+/* Responsive home page */
+@media (max-width: 768px) {
+  .upload-choice-content h1 {
+    font-size: 2rem !important;
+  }
+  
+  .upload-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .upload-option {
+    padding: 1.5rem !important;
+  }
+}
+
+/* ============================================
+   EXTRACTED RESULTS PAGE FIXES
+   ============================================ */
+
+.extracted-container {
+  padding: 2rem 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.extracted-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.extracted-icon {
+  font-size: 3.5rem !important;
+  margin-bottom: 1rem;
+}
+
+.extracted-header h2 {
+  font-size: 1.75rem !important;
+  margin-bottom: 0.75rem;
+}
+
+.extracted-summary {
+  font-size: 1rem !important;
+  line-height: 1.6;
+}
+
+.contract-info-card {
+  padding: 1.5rem !important;
+  margin-bottom: 1.5rem;
+}
+
+.contract-info-card h3 {
+  font-size: 1.25rem !important;
+  margin-bottom: 1rem;
+}
+
+.extracted-details {
+  gap: 1rem;
+}
+
+.detail-label {
+  font-size: 0.85rem !important;
+}
+
+.detail-value {
+  font-size: 0.95rem !important;
+}
+
+.extracted-stats-bar {
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.extracted-stats-bar .stat {
+  padding: 1.25rem !important;
+}
+
+.stat-value {
+  font-size: 2rem !important;
+}
+
+.stat-label {
+  font-size: 0.85rem !important;
+}
+
+.extracted-summary-box {
+  padding: 1.5rem !important;
+  margin-bottom: 1.5rem;
+}
+
+.extracted-summary-box h3 {
+  font-size: 1.25rem !important;
+  margin-bottom: 1rem;
+}
+
+.extracted-summary-box p {
+  font-size: 0.95rem !important;
+  line-height: 1.6;
+}
+
+.extracted-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.btn-show-rules {
+  padding: 1rem 2rem !important;
+  font-size: 1rem !important;
+}
+
+.btn-upload-another {
+  padding: 0.75rem 1.5rem !important;
+  font-size: 0.95rem !important;
+}
