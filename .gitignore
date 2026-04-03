@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# Upload documents (user files)
+upload docs/
+agent_1_output_json_files/
+
+# Environment variables (keep .env.example committed!)
+.env
+.env.local
+.env.production
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test files
+test-*.json
+test-*.sh
+test-*-output.json
+test-*-SUCCESS.json
+
+# Build outputs
+dist/
+build/
+
