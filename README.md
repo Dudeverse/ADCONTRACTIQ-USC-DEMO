@@ -111,12 +111,21 @@ adcontractiq/
 The system runs three independent n8n webhooks:
 
 **Webhook 1 — `/classify-contract`**
+
+![Agent 0](./assets/agent0.png)
+
 Receives PDF upload → extracts text → GPT-5.1 classification agent → parses JSON → logs to `classification_log`
 
 **Webhook 2 — `/extract-rules`**
+
+![Agent 1](./assets/agent1.png)
+
 Receives contract text → GPT-5.1 extraction agent → parses and validates rules → logs each rule to `rules_log` with `reviewed: false`
 
 **Webhook 3 — `/build-expressions`**
+
+![Agent 2](./assets/agent2.png)
+
 Receives finalized rules → GPT-5.1 expression builder → returns calculation chains → simultaneously updates `rules_log` with `reviewed: true` and timestamp
 
 Every agent runs at temperature 0. Structured JSON output is enforced at the parse layer. Prompt versions are tracked in the audit log.
