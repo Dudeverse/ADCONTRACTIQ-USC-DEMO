@@ -1,5 +1,5 @@
 // LegalLucy configuration
-const N8N_BASE_URL = "https://pamv3demo.app.n8n.cloud"
+const N8N_BASE_URL = "https://pamv3.app.n8n.cloud"
 // these are the paths for the webhooks
 const N8N_WEBHOOK_PATHS = {
   CLASSIFY_CONTRACT: "/webhook/classify-contract",
