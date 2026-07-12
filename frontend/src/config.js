@@ -1,11 +1,13 @@
 // LegalLucy configuration
-const N8N_BASE_URL = "https://pamv3.app.n8n.cloud"
-// these are the paths for the webhooks
-const N8N_WEBHOOK_PATHS = {
-  CLASSIFY_CONTRACT: "/webhook/classify-contract",
-  EXTRACT_RULES: "/webhook/extract-rules",
-  BUILD_EXPRESSIONS: "/webhook/build-expressions",
+const env = import.meta.env
+
+const envString = (key, fallback) => {
+  if (env[key] !== undefined) return env[key]
+  return fallback
 }
+
+const N8N_BASE_URL = envString("VITE_N8N_BASE_URL", "https://pamv3.app.n8n.cloud")
+const N8N_WEBHOOK_PREFIX = envString("VITE_N8N_WEBHOOK_PREFIX", "webhook")
 
 const joinUrl = (baseUrl, path) => {
   let base = baseUrl
@@ -19,12 +21,7 @@ const joinUrl = (baseUrl, path) => {
   return `${base}${suffix}`
 }
 
-const env = import.meta.env
-
-const envString = (key, fallback) => {
-  if (env[key] !== undefined) return env[key]
-  return fallback
-}
+const webhookPath = (name) => `/${N8N_WEBHOOK_PREFIX}/${name}`
 
 const envBool = (key, fallback) => {
   const value = env[key]
@@ -39,9 +36,18 @@ const envNumber = (key, fallback) => {
 }
 
 export const CONFIG = {
-  N8N_CLASSIFY_URL: joinUrl(N8N_BASE_URL, N8N_WEBHOOK_PATHS.CLASSIFY_CONTRACT),
-  N8N_EXTRACT_URL: joinUrl(N8N_BASE_URL, N8N_WEBHOOK_PATHS.EXTRACT_RULES),
-  N8N_EXPRESSIONS_URL: joinUrl(N8N_BASE_URL, N8N_WEBHOOK_PATHS.BUILD_EXPRESSIONS),
+  N8N_CLASSIFY_URL: envString(
+    "VITE_N8N_CLASSIFY_URL",
+    joinUrl(N8N_BASE_URL, webhookPath("classify-contract"))
+  ),
+  N8N_EXTRACT_URL: envString(
+    "VITE_N8N_EXTRACT_URL",
+    joinUrl(N8N_BASE_URL, webhookPath("extract-rules"))
+  ),
+  N8N_EXPRESSIONS_URL: envString(
+    "VITE_N8N_EXPRESSIONS_URL",
+    joinUrl(N8N_BASE_URL, webhookPath("build-expressions"))
+  ),
 
   APP_NAME: envString("VITE_APP_NAME", "LegalLucy"),
   APP_VERSION: envString("VITE_APP_VERSION", "1.0.0"),
