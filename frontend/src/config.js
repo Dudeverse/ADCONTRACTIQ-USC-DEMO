@@ -6,7 +6,7 @@ const envString = (key, fallback) => {
   return fallback
 }
 
-const N8N_BASE_URL = envString("VITE_N8N_BASE_URL", "https://pamv3.app.n8n.cloud")
+const N8N_BASE_URL = envString("VITE_N8N_BASE_URL", "https://adqv3.app.n8n.cloud")
 const N8N_WEBHOOK_PREFIX = envString("VITE_N8N_WEBHOOK_PREFIX", "webhook")
 
 const joinUrl = (baseUrl, path) => {
